@@ -62,24 +62,34 @@ jobs:
           pip install "setuptools<70"
 
       - name: Authenticate to Cloud Storage
-        # TODO 2: Ghi noi dung credentials ra file tam va set bien moi truong xac thuc.
+        env:
+          STORAGE_CREDENTIALS: ${{ secrets.STORAGE_CREDENTIALS }}
         run: |
-          python -c "
-          import json, os
+          python -c '
+          import json, os, sys
+          raw = os.environ.get("STORAGE_CREDENTIALS", "").strip()
+          if not raw:
+              print("ERROR: STORAGE_CREDENTIALS secret is empty!")
+              sys.exit(1)
           try:
-              creds = json.loads('''${{ secrets.STORAGE_CREDENTIALS }}''')
-              with open(os.environ['GITHUB_ENV'], 'a') as f:
-                  if 'aws_access_key_id' in creds:
-                      f.write(f\"AWS_ACCESS_KEY_ID={creds['aws_access_key_id']}\n\")
-                      f.write(f\"AWS_SECRET_ACCESS_KEY={creds['aws_secret_access_key']}\n\")
-                      f.write(\"AWS_DEFAULT_REGION=us-east-1\n\")
-                  else:
-                      with open('/tmp/sa-key.json', 'w') as kf:
-                          json.dump(creds, kf)
-                      f.write(\"GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-key.json\n\")
+              creds = json.loads(raw)
           except Exception as e:
-              print('Auth notice:', e)
-          "
+              print("ERROR: Failed to parse STORAGE_CREDENTIALS as JSON:", e)
+              sys.exit(1)
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              if isinstance(creds, dict) and ("aws_access_key_id" in creds or "AWS_ACCESS_KEY_ID" in creds):
+                  ak = creds.get("aws_access_key_id") or creds.get("AWS_ACCESS_KEY_ID")
+                  sk = creds.get("aws_secret_access_key") or creds.get("AWS_SECRET_ACCESS_KEY")
+                  f.write(f"AWS_ACCESS_KEY_ID={ak}\n")
+                  f.write(f"AWS_SECRET_ACCESS_KEY={sk}\n")
+                  f.write("AWS_DEFAULT_REGION=us-east-1\n")
+                  print("Configured AWS credentials successfully.")
+              else:
+                  with open("/tmp/sa-key.json", "w") as kf:
+                      json.dump(creds, kf)
+                  f.write("GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-key.json\n")
+                  print("Configured GCP credentials successfully.")
+          '
 
       - name: Pull data with DVC
         # TODO 3: Pull cac file du lieu can thiet tu cloud storage bang lenh dvc pull.

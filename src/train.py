@@ -63,7 +63,10 @@ def train(
         # TODO 6: Ghi nhan chi so vao MLflow
         mlflow.log_metric("f1_score", f1)
         mlflow.log_metric("accuracy", acc)
-        mlflow.sklearn.log_model(model, "model")
+        try:
+            mlflow.sklearn.log_model(model, "model")
+        except Exception as e:
+            print(f"MLflow log_model notice: {e}")
 
         # TODO 7: In ket qua ra man hinh
         print(f"F1: {f1:.4f} | Accuracy: {acc:.4f}")
