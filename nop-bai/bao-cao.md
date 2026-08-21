@@ -1,16 +1,5 @@
 # Báo Cáo Lab Day 21 - CI/CD cho AI Systems
 
-<!--
-HƯỚNG DẪN - đọc rồi XÓA TOÀN BỘ các khối chú thích này sau khi điền xong:
-
-  - Giới hạn: KHÔNG QUÁ 1 TRANG A4, tương đương khoảng 450 - 550 từ nội dung.
-  - Chỉ điền vào các chỗ ___ và các ô trong bảng. Không thêm mục mới.
-  - Viết bằng câu hoàn chỉnh, không gạch đầu dòng cụt lủn.
-  - Kiểm tra độ dài sau khi đã xóa hết chú thích:
-        wc -w nop-bai/bao-cao.md
-    và xem trước bản in bằng cách mở file trên GitHub rồi Ctrl+P / Cmd+P.
--->
-
 | | |
 |---|---|
 | Họ và tên | Bùi Đức Hiếu |
@@ -53,28 +42,9 @@ Tập dữ liệu Adult có sự mất cân bằng lớp rõ rệt khi lớp thi
 
 ## 4. So Sánh Bước 2 và Bước 3 (bắt buộc, 2 - 3 câu)
 
-<!-- Lấy số liệu từ bảng ở mục 3.6 của tasks/buoc-3.md. -->
-
 | | f1_score | accuracy |
 |---|---|---|
-| Bước 2 (chỉ `train_batch1`) | ___ | ___ |
-| Bước 3 (thêm `train_batch2`) | ___ | ___ |
+| Bước 2 (chỉ `train_batch1`) | 0.7109 | 0.8780 |
+| Bước 3 (thêm `train_batch2`) | 0.7014 | 0.8740 |
 
-**Nhận xét:** ___
-
-<!--
-Một câu trả lời trung thực kiểu "f1 giảm 0,01 vì dữ liệu mới cùng phân phối, không mang
-thêm thông tin mới" được đánh giá cao hơn kết luận sai rằng thêm dữ liệu luôn tốt hơn.
--->
-
----
-
-## 5. Phần Bonus Đã Thực Hiện (nếu có)
-
-<!-- Xóa cả mục 5 nếu không làm bonus. Mỗi bonus tối đa 1 dòng. -->
-
-- [ ] Bonus 1 - Tracking MLflow từ xa với DagsHub: ___
-- [ ] Bonus 2 - Điều chỉnh ngưỡng quyết định: ___
-- [ ] Bonus 3 - Báo cáo precision / recall tự động: ___
-- [ ] Bonus 4 - Hoàn trả về phiên bản trước: ___
-- [ ] Bonus 5 - Cảnh báo lệch lạc dữ liệu: ___
+**Nhận xét:** Khi bổ sung thêm 22.361 mẫu dữ liệu mới ở Bước 3 (tổng cộng 44.722 mẫu), điểm F1 giảm nhẹ từ 0.7109 xuống 0.7014 và Accuracy dao động nhẹ từ 0.8780 xuống 0.8740. Điều này hoàn toàn phù hợp với thực tế vì tập dữ liệu mới được phân chia ngẫu nhiên từ cùng một phân phối dữ liệu ban đầu, không mang thêm thông tin đột phá mới mà mô hình chưa học được từ 22.361 mẫu đầu. Điểm cốt lõi quan trọng nhất của Bước 3 là đã chứng minh được tính liên tục và hoàn toàn tự động của pipeline CI/CD: chỉ cần cập nhật dữ liệu và push commit DVC lên GitHub, toàn bộ chu trình kiểm thử, huấn luyện lại, kiểm tra chất lượng và tái triển khai lên máy chủ EC2 đều diễn ra trơn tru mà không cần can thiệp thủ công.
